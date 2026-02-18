@@ -7,6 +7,7 @@ import Profile from './pages/Profile'
 import Upload from './pages/Upload'
 import Watch from './pages/Watch'
 import Search from './pages/Search'
+import History from './pages/History'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/search/:query" element={<Search />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/history" element={<History />} />
       </Routes>
     </Layout>
   )
