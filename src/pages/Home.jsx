@@ -113,6 +113,12 @@ export default function Home() {
         }
     }
 
+    function handlePrevPage() {
+        if (page > 1) {
+            navigate(`/?page=${page - 1}`)
+        }
+    }
+
     // Second useEffect for infinite scroll as requested ("keep two useEffect")
     useEffect(() => {
         const handleScroll = () => {
@@ -156,6 +162,23 @@ export default function Home() {
                         </Link>
                     </div>
                 ))}
+            </div>
+
+            <div className="flex justify-center mt-10 gap-4">
+                <button
+                    onClick={handlePrevPage}
+                    disabled={page === 1}
+                    className="px-4 py-2 bg-gray-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                    Previous Page
+                </button>
+                <button
+                    onClick={handlenextPage}
+                    disabled={!nextPageToken}
+                    className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                    Next Page
+                </button>
             </div>
         </div>
     )
