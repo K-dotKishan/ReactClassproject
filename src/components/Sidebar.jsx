@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom"
+
 export default function Sidebar() {
+    const navigate = useNavigate()
     return (
         <div className="w-[240px] h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-3 hidden md:block overflow-y-auto">
             <ul className="space-y-1">
-                <li className="flex items-center gap-5 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer text-gray-900 dark:text-white">
+                <li onClick={() => navigate("/")} className="flex items-center gap-5 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer text-gray-900 dark:text-white">
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
                     <span className="text-sm font-medium">Home</span>
                 </li>

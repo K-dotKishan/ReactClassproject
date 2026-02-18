@@ -6,21 +6,22 @@ import Home from './pages/Home'
 import Profile from './pages/Profile'
 import Upload from './pages/Upload'
 import Watch from './pages/Watch'
+import Search from './pages/Search'
 
 function App() {
 
 
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/watch/:id" element={<Watch />} />
-          <Route path="/upload" element={<Upload />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/:page" element={<Home />} />
+        <Route path="/watch/:id" element={<Watch />} />
+        <Route path="/search/:query" element={<Search />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </Layout>
   )
 }
 

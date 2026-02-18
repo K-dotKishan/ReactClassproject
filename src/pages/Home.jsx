@@ -1,18 +1,77 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ShimmerCard from '../components/ShimmerCard'
-
+import { useSearchParams, useNavigate } from 'react-router-dom'
 export default function Home() {
+
+
+    const [searchParams] = useSearchParams()
+    const navigate = useNavigate()
     const [videos, setVideos] = useState([])
     const [loading, setLoading] = useState(true)
+    const [nextPageToken, setNextPageToken] = useState(null)
+    const [tocken, setTocken] = useState({})
+    const page = Number(searchParams.get('page')) || 1
     const [error, setError] = useState(null)
+
+    const fetchMoreVideos = async () => {
+        try {
+            if (loading) return
+            const currentToken = nextPageToken
+            if (!currentToken) return
+
+            const response = await fetch(
+                `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=24&regionCode=IN&key=${import.meta.env.VITE_API_KEY_YT}&pageToken=${currentToken}`
+            )
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch videos')
+            }
+
+            const data = await response.json()
+
+            const newVideos = data.items.map((video) => ({
+                id: video.id,
+                title: video.snippet.title,
+                thumbnail: video.snippet.thumbnails.high.url,
+                channelTitle: video.snippet.channelTitle,
+                publishedAt: new Date(video.snippet.publishedAt).toLocaleDateString(),
+                views: video.statistics.viewCount,
+                duration: video.contentDetails.duration,
+            }))
+
+            setVideos((prev) => [...prev, ...newVideos])
+            setNextPageToken(data.nextPageToken || null)
+
+            // Update token for the next page in our map if it's new
+            if (data.nextPageToken) {
+                // If we are currently on "page 1" and just fetched more, effectively we are fetching content for page 2...
+                // But this logic is tricky with infinite scroll mixed with page numbers.
+                // We'll keep it simple: just update token state if we can mapping it to a hypothetical next page?
+                // Actually, if user relies on `tocken[page]` for `fetchVideos`, we should ensure it's populated.
+                // If we infinite scroll, `page` param doesn't change.
+                // So `tocken` map might de-sync from scroll position if we rely only on `page`.
+                // But sticking to user's request to keep logic:
+                setTocken((prevTocken) => ({ ...prevTocken, [page]: data.nextPageToken }))
+            }
+
+        } catch (err) {
+            console.error(err)
+            setError(err.message)
+        }
+    }
 
     useEffect(() => {
         async function fetchVideos() {
+            setLoading(true)
             try {
-                // Using 'mostPopular' chart instead of 'myRating=like' as generic API key cannot access user's liked videos
+                // Initial fetch logic: Use token from *previous* page to get *current* page content.
+                // Page 1: tocken[0] (undefined) -> no token -> fetches page 1.
+                // Page 2: tocken[1] -> should be token for page 2.
+                const currentToken = tocken[page - 1] || ""
+
                 const response = await fetch(
-                    `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=24&regionCode=IN&key=${import.meta.env.VITE_API_KEY_YT}`
+                    `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=24&regionCode=IN&key=${import.meta.env.VITE_API_KEY_YT}${currentToken ? `&pageToken=${currentToken}` : ''}`
                 )
 
                 if (!response.ok) {
@@ -32,6 +91,11 @@ export default function Home() {
                 }))
 
                 setVideos(formattedVideos)
+                setNextPageToken(data.nextPageToken || null)
+
+                if (data.nextPageToken && !tocken[page]) {
+                    setTocken((prevTocken) => ({ ...prevTocken, [page]: data.nextPageToken }))
+                }
             } catch (err) {
                 console.error(err)
                 setError(err.message)
@@ -41,7 +105,25 @@ export default function Home() {
         }
 
         fetchVideos()
-    }, [])
+    }, [page]) // Dependent on 'page' from URL
+
+    function handlenextPage() {
+        if (nextPageToken) {
+            navigate(`/?page=${page + 1}`)
+        }
+    }
+
+    // Second useEffect for infinite scroll as requested ("keep two useEffect")
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
+                fetchMoreVideos()
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [nextPageToken, loading])
 
     if (error) return <div className="p-4 text-center text-red-500">Error: {error}</div>
 
