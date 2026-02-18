@@ -18,6 +18,7 @@ export default function Home() {
         try {
             if (loading) return
             const currentToken = nextPageToken
+            console.log(currentToken)
             if (!currentToken) return
 
             const response = await fetch(
