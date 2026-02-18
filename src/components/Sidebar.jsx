@@ -26,9 +26,9 @@ export default function Sidebar() {
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11 7l6 3.5-6 3.5V7zm7 13H4v6h14v-6zm-2-2H6v2h10v-2zm2-2H6v2h10v-2zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z" /></svg>
                         <span className="text-sm font-medium">Library</span>
                     </li>
-                    <li className="flex items-center gap-5 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer text-gray-900 dark:text-white">
+                    <li onClick={() => navigate("/history")} className="flex items-center gap-5 px-3 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer text-gray-900 dark:text-white">
                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>
-                        <span className="text-sm font-medium">History</span>
+                        <span className="text-sm font-medium">Watch History</span>
                     </li>
                 </ul>
             </div>
