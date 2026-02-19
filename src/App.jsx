@@ -8,6 +8,7 @@ import Upload from './pages/Upload'
 import Watch from './pages/Watch'
 import Search from './pages/Search'
 import History from './pages/History'
+import Homescroll from './pages/Homescroll'
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/upload" element={<Upload />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/history" element={<History />} />
+        <Route path="/homescroll" element={<Homescroll />} />
       </Routes>
     </Layout>
   )
